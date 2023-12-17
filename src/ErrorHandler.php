@@ -2,6 +2,14 @@
 
 class ErrorHandler
 {
+    public static function handleError(
+        int $errno,
+        string $errstr,
+        string $errfile,
+        int $errline): void
+    {
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
     //Throwable class is the base for all errors and exceptions thrown in PHP (details about error)
     public static function handleException(Throwable $exception): void
     {
