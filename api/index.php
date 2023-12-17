@@ -31,15 +31,14 @@ if (! $auth->authenticateAPIKey()) {
 }
 
 $user_id = $auth->getUserID();
-var_dump($user_id);
-exit;
+
 
 
 //Passing parameter for constructor method
 $task_gateway = new TaskGateway($database);
 
 
-$controller = new TaskController($task_gateway);
+$controller = new TaskController($task_gateway, $user_id);
 
 $controller->processRequest($_SERVER['REQUEST_METHOD'], $id);
 
