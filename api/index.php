@@ -37,6 +37,11 @@ if (empty($_SERVER["HTTP_X_API_KEY"])) {
 
 $api_key = $_SERVER["HTTP_X_API_KEY"];
 
+
+$database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
+
+$user_gateway = new UserGateway($database);
+
 echo $api_key;
 
 // echo $api_key;
@@ -46,7 +51,7 @@ exit;
 
 header("Content-type: application/json; charset=UTF-8");
 
-$database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
+
 
 
 //Passing parameter for constructor method
