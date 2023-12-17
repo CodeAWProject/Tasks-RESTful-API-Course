@@ -53,4 +53,31 @@ class TaskGateway
 
         return $data;
     }
+
+    public function create(array $data): string
+    {
+        $sql = "INSERT INTO task(name, priority, is_completed)
+                VALUE (:name, :priority, :is_completed)";
+
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindValue(":name", $data["name"], PDO::PARAM_STR);
+
+        // IF this element of the array is empty, we'll bind null to the priority placeholder
+        if (empty($data["priority"])) {
+            $stmt->bindValue(":priority", null, PDO::PARAM_NULL);
+            //we'll bind the value from the array as an integer
+        } else {
+            $stmt->bindValue(":priority", $data["priority"], PDO::PARAM_INT);
+        }
+
+        //Making this value optional
+        $stmt->bindValue(":is_completed", $data["is_completed"] ?? false,
+                        PDO::PARAM_BOOL);
+
+        $stmt->execute();
+        
+        //Calling last insterted id into database
+        return $this->conn->lastInsertId();
+    }
 }
