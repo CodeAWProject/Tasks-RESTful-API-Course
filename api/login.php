@@ -55,14 +55,17 @@ if(! password_verify($data["password"], $user["password_hash"])) {
 }
 
 $payload = [
-    "id" => $user["id"],
+    "sub" => $user["id"],
     "name" => $user["name"]
 ];
 
 
-//base64 will turn it into a simple string of characters
-//It the access token is encoded ID and name of the iser
-$access_token = base64_encode(json_encode($payload));
+// //base64 will turn it into a simple string of characters
+// //It the access token is encoded ID and name of the iser
+// $access_token = base64_encode(json_encode($payload));
+
+$codec = new JWTCodec;
+$access_token = $codec->encode($payload);
 
 echo json_encode([
     "access_token" => $access_token
