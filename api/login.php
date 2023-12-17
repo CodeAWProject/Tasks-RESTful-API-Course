@@ -11,6 +11,8 @@ if($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
+
+//For acces token -------->
 //Retrive an associative array of the JSON data passed in API request
 $data = (array) json_decode(file_get_contents("php://input"), true);
 
@@ -35,4 +37,22 @@ $user_gateway = new UserGateway($database);
 
 $user = $user_gateway->getByUsername($data["username"]);
 
-echo json_encode($user);   
+
+// Invalid user
+if ($user === false) {
+
+    http_response_code(401);
+    echo json_encode(["message" => "invalid authentication"]);
+    exit;
+}
+
+// Invalid password
+if(! password_verify($data["password"], $user["password_hash"])) {
+
+    http_response_code(401);
+    echo json_encode(["message" => "invalid authentication"]);
+    exit;
+}
+
+echo json_encode("Successful authentication");
+
