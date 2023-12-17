@@ -59,6 +59,22 @@ class TaskController
                     break;
                 
                 case "PATCH":
+
+                    //Geting data from the request
+                    $data = (array) json_decode(file_get_contents("php://input"), true);
+
+                    //Validating the data
+                    $errors = $this->getValidationErrors($data, false);
+
+                    //Return 422 if it's invalid
+                    if( !empty($errors)) {
+                        // It can't insert a new record because the data isn't valid
+
+                        $this->respondUnprocessableEntity($errors);
+                        return;
+
+                    }
+
                     echo "update $id";
                     break;
                     
@@ -97,11 +113,12 @@ class TaskController
         echo json_encode(["message" => "Task created", "id" => $id]);
     }
 
-    private function getValidationErrors(array $data): array
+    // This boolean means we don't have to change the existing code where we're calling this method when we create a new record
+    private function getValidationErrors(array $data, bool $is_new = true): array
     {
         $errors = [];
 
-        if (empty($data["name"])) {
+        if ($is_new && empty($data["name"])) {
 
             $errors[] = "name is required";
         }
