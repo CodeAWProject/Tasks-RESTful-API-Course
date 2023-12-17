@@ -21,11 +21,21 @@ class TaskController
                 //If the body is empty or contains invalid JSON, we'll just have an empty array
                 $data = (array) json_decode(file_get_contents("php://input"), true);
 
+                $errors = $this->getValidationErrors($data);
+
+                if( !empty($errors)) {
+                    // It can't insert a new record because the data isn't valid
+
+                    $this->respondUnprocessableEntity($errors);
+                    return;
+
+                }
+
                 //Assigning the return value of this method $data to the $id variable
                 $id = $this->gateway->create($data);
 
                 $this->respondCreated($id);
-                
+
             } else {
                 
                 $this->respondMethodNotAllowed("GET, POST");
@@ -62,6 +72,12 @@ class TaskController
         }
     }
 
+    private function respondUnprocessableEntity(array $errors):void
+    {
+        http_response_code(422);
+        echo json_encode(["errors" => $errors]);
+    }
+
     // This won't return anything, so we are adding the void return type declaration
     private function respondMethodNotAllowed(string $allowed_methods): void
     {
@@ -79,6 +95,26 @@ class TaskController
     {
         http_response_code(201);
         echo json_encode(["message" => "Task created", "id" => $id]);
+    }
+
+    private function getValidationErrors(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data["name"])) {
+
+            $errors[] = "name is required";
+        }
+
+        if( ! empty($data["priority"])) {
+
+            //Checking it contains an integer value
+            if(filter_var($data["priority"], FILTER_VALIDATE_INT) === false) {
+                $errors[] = "priority must be an integer";
+            }
+        }
+
+        return $errors;
     }
 }
 
