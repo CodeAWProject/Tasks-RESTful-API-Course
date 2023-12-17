@@ -37,8 +37,7 @@ if (! $auth->authenticateAccessToken()) {
     exit;
 }
 
-echo "valid authentication";
-exit;
+
 
 $user_id = $auth->getUserID();
 
