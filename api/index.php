@@ -24,6 +24,14 @@ $database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $
 
 $user_gateway = new UserGateway($database);
 
+var_dump($_SERVER["HTTP_AUTHORIZATION"]);
+
+
+//Featching all HTTP request headers
+// $headers = apache_request_headers();
+// echo $headers["Authorization"];
+exit;
+
 $auth = new Auth($user_gateway);
 
 if (! $auth->authenticateAPIKey()) {
