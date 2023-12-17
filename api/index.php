@@ -30,6 +30,10 @@ if (! $auth->authenticateAPIKey()) {
     exit;
 }
 
+$user_id = $auth->getUserID();
+var_dump($user_id);
+exit;
+
 
 //Passing parameter for constructor method
 $task_gateway = new TaskGateway($database);
