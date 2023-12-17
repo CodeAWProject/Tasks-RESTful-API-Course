@@ -33,7 +33,7 @@ class TaskController
                 }
 
                 //Assigning the return value of this method $data to the $id variable
-                $id = $this->gateway->create($data);
+                $id = $this->gateway->createForUser($this->user_id, $data);
 
                 $this->respondCreated($id);
 
@@ -43,7 +43,7 @@ class TaskController
             }
         } else {
 
-            $task = $this->gateway->get($id);
+            $task = $this->gateway->getForUser($this->user_id, $id);
 
 
             //Checking that the value is strictly Boolean false
@@ -76,12 +76,12 @@ class TaskController
 
                     }
 
-                    $rows = $this->gateway->update($id, $data);
+                    $rows = $this->gateway->updateForUser($this->user_id, $id, $data);
                     echo json_encode(["message" => "Task updated", "rows" => $rows]);
                     break;
                     
                 case "DELETE":
-                    $rows = $this->gateway->delete($id);
+                    $rows = $this->gateway->deleteForUser($this->user_id, $id);
                     echo json_encode(["message" => "Task deleted", "rows" => $rows]);
                     break;
 

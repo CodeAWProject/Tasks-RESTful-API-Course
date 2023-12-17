@@ -38,16 +38,18 @@ class TaskGateway
 
 
     //This returns false if there's no record with that ID
-    public function get(string $id): array | false
+    public function getForUser(int $user_id, string $id): array | false
     {
         $sql = "SELECt *
                 FROM task
-                WHERE id = :id";
+                WHERE id = :id
+                AND user_id = :user_id";
 
         $stmt = $this->conn->prepare($sql);        
 
         //Specifing that id shuald be inserted into SQL string as an integer
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":user_id", $user_id, PDO::PARAM_INT);
 
         $stmt->execute();
 
@@ -60,10 +62,10 @@ class TaskGateway
         return $data;
     }
 
-    public function create(array $data): string
+    public function createForUser(int $user_id, array $data): string
     {
-        $sql = "INSERT INTO task(name, priority, is_completed)
-                VALUE (:name, :priority, :is_completed)";
+        $sql = "INSERT INTO task(name, priority, is_completed, user_id)
+                VALUE (:name, :priority, :is_completed, :user_id)";
 
         $stmt = $this->conn->prepare($sql);
         
@@ -81,13 +83,15 @@ class TaskGateway
         $stmt->bindValue(":is_completed", $data["is_completed"] ?? false,
                         PDO::PARAM_BOOL);
 
+        $stmt->bindValue(":user_id", $user_id, PDO::PARAM_INT);                
+
         $stmt->execute();
         
         //Calling last insterted id into database
         return $this->conn->lastInsertId();
     }
 
-    public function update(string $id, array $data): int
+    public function updateForUser(int $user_id, string $id, array $data): int
     {
         $fields = [];
 
@@ -127,11 +131,13 @@ class TaskGateway
 
             $sql = "UPDATE task"
                 . " SET " . implode(", ", $sets)
-                . " WHERE id = :id";
+                . " WHERE id = :id"
+                . " AND user_id = :user_id";
 
             $stmt = $this->conn->prepare($sql);
 
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            $stmt->bindValue(":user_id", $user_id, PDO::PARAM_INT);
 
             // Looping around the array to getting the keys and the values
             foreach ($fields as $name => $values) {
@@ -149,14 +155,16 @@ class TaskGateway
         
     }
 
-    public function delete(string $id): int
+    public function deleteForUser(int $user_id, string $id): int
     {
         $sql = "DELETE FROM task
-                WHERE id = :id";
+                WHERE id = :id
+                AND user_id = :user_id";
 
         $stmt = $this->conn->prepare($sql);
         
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":user_id", $user_id, PDO::PARAM_INT);
 
         $stmt->execute();
 
