@@ -17,7 +17,9 @@ class TaskController
 
             } elseif ($method == "POST") {
                 
-                echo "create";
+                $data = (array) json_decode(file_get_contents("php://input"), true);
+
+                var_dump($data);
             } else {
                 
                 $this->respondMethodNotAllowed("GET, POST");
