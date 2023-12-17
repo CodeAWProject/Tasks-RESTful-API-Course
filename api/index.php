@@ -26,6 +26,15 @@ if ($resource != "tasks") {
     exit;
 }
 
+$api_key = $_SERVER["HTTP_X_API_KEY"];
+
+echo $api_key;
+
+// echo $api_key;
+
+// print_r($_SERVER);
+exit;
+
 header("Content-type: application/json; charset=UTF-8");
 
 $database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
