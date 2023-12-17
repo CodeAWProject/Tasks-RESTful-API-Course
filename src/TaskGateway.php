@@ -30,6 +30,8 @@ class TaskGateway
         
     }
 
+
+    //This returns false if there's no record with that ID
     public function get(string $id): array | false
     {
         $sql = "SELECt *
