@@ -43,4 +43,22 @@ try {
 
 $user_id = $payload["sub"];
 
-var_dump($user_id);
+
+$database = new Database($_ENV["DB_HOST"],
+                        $_ENV["DB_NAME"],
+                        $_ENV["DB_USER"],
+                        $_ENV["DB_PASS"]);
+
+$user_gateway = new UserGateway($database);
+
+$user = $user_gateway->getByID($user_id);
+
+// If no record is found with that ID
+if ($user === false) {
+
+    http_response_code(401);
+    echo json_encode(["message" => "invalid authentication"]);
+    exit;
+}
+
+var_dump($user);
