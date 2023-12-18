@@ -51,5 +51,5 @@ $database = new Database($_ENV["DB_HOST"],
 $refresh_token_gateway = new RefreshTokenGateway($database, $_ENV["SECRET_KEY"]);
 
 
-
+//Delete expired refresh token from the database
 $refresh_token_gateway->delete($data["token"]);
