@@ -14,10 +14,12 @@ $payload = [
 
 $access_token = $codec->encode($payload);
 
+$refresh_token_expiry = time() + 432000;
+
 $refresh_token = $codec->encode([
     "sub" => $user["id"],
     //5 days
-    "exp" => time() + 432000
+    "exp" => $refresh_token_expiry
 ]);
 
 echo json_encode([
