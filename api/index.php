@@ -25,13 +25,13 @@ $database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $
 $user_gateway = new UserGateway($database);
 
 
-
+$codec = new JWTCodec($_ENV["SECRET_KEY"]);
 
 //Featching all HTTP request headers
 // $headers = apache_request_headers();
 // echo $headers["Authorization"];
 
-$auth = new Auth($user_gateway);
+$auth = new Auth($user_gateway, $codec);
 
 if (! $auth->authenticateAccessToken()) {
     exit;

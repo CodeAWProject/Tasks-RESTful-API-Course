@@ -4,7 +4,7 @@ class Auth
 {
     private int $user_id;
 
-    public function __construct(private UserGateway $user_gateway) {
+    public function __construct(private UserGateway $user_gateway, private JWTCodec $codec) {
             
     }
     public function authenticateAPIKey(): bool
@@ -51,28 +51,18 @@ class Auth
        }
 
        //Decoding acces token
-       $plain_text = base64_decode($matches[1], true);
 
-
-       if($plain_text === false)
-       {
+       try {
+        $data = $this->codec->decode($matches[1]);
+       } catch  (Exception $e){
 
         http_response_code(400);
-        echo json_encode(["message" => "invalid authorization header"]);
+        echo json_encode(["message" => $e->getMessage()]);
         return false;
        }
+       
 
-       //Get an aray instead of an object
-       $data = json_decode($plain_text, true);
-
-
-       if ($data === null) {
-
-        http_response_code(400);
-        echo json_encode(["message" => "invalid JSON"]);
-       }
-
-       $this->user_id = $data["id"];
+       $this->user_id = $data["sub"];
 
        return true;
     }
