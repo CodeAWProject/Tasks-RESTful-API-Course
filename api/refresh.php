@@ -40,6 +40,7 @@ try {
 }
 
 // If is valid getting user ID from the token
+//Getting the user record from the database based on the ID in the refresh token
 
 $user_id = $payload["sub"];
 
@@ -61,4 +62,4 @@ if ($user === false) {
     exit;
 }
 
-var_dump($user);
+require __DIR__ . "/tokens.php";
