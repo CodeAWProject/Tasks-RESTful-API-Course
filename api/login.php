@@ -68,8 +68,15 @@ $payload = [
 $codec = new JWTCodec($_ENV["SECRET_KEY"]);
 $access_token = $codec->encode($payload);
 
+$refresh_token = $codec->encode([
+    "sub" => $user["id"],
+    //5 days
+    "exp" => time() + 432000
+]);
+
 echo json_encode([
-    "access_token" => $access_token
+    "access_token" => $access_token,
+    "refresh_token" => $refresh_token
 ]);
 
 

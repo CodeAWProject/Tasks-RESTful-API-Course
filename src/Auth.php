@@ -50,7 +50,7 @@ class Auth
         return false;
        }
 
-       //Decoding acces token
+       //Decoding access token
 
        try {
         $data = $this->codec->decode($matches[1]);
