@@ -19,11 +19,38 @@ class JWTCodec
         //True is for getting binary value
         $signature = hash_hmac("sha256",
                                 $header . "." . $payload,
-                                "c1c4578b254ac5181c5ec5845ef51c7795de3779f0c123ec0b4c533710503054,
-                                true");
+                                "c1c4578b254ac5181c5ec5845ef51c7795de3779f0c123ec0b4c533710503054",
+                                true);
         $signature = $this->base64urlEncode($signature);
         
         return $header . "." . $payload . "." . $signature;
+    }
+
+    public function decode(string $token): array
+    {
+       if(preg_match("/^(?<header>.+)\.(?<payload>.+)\.(?<signature>.+)$/", 
+            $token, 
+            $matches) !== 1) {
+
+         throw new InvalidArgumentException("invalid token format");       
+            }
+
+        $signature = hash_hmac("sha256",
+            $matches["header"] . "." . $matches["payload"],
+            "c1c4578b254ac5181c5ec5845ef51c7795de3779f0c123ec0b4c533710503054",
+            true);
+        $signature_from_token = $this->base64urlDecode($matches["signature"]);
+        
+        // Timing attack safe string comparison
+        //If the signature would change and wouldn't match
+        if( ! hash_equals($signature, $signature_from_token)) {
+
+            throw new Exception("signature doesn't match");
+        }
+
+        $payload = json_decode($this->base64urlDecode($matches["payload"]), true);
+
+        return $payload;
     }
 
     private function base64urlEncode(string $text): string
@@ -33,5 +60,14 @@ class JWTCodec
             ["-", "_", ""],
             base64_encode($text)
         );    
+    }
+
+    private function base64urlDecode(string $text): string
+    {
+        return base64_decode(str_replace(
+            ["-", "_"],
+            ["+", "/"],
+            $text)
+        );
     }
 }
